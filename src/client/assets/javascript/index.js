@@ -75,7 +75,10 @@ async function delay(ms) {
 // This async function controls the flow of the race, add the logic and error handling
 async function handleCreateRace() {
 	// render starting UI
-	renderAt('#race', renderRaceStartView())
+
+	let player = await getRacers().then(res => res.filter(x => x.id === store.player_id))
+	let track = await getTracks().then(res => res.filter(x => x.id === store.track_id))
+	renderAt('#race', renderRaceStartView(player))
 
 	// TODO - Get player_id and track_id from the store
 	
@@ -322,10 +325,18 @@ function defaultFetchOpts() {
 
 function getTracks() {
 	// GET request to `${SERVER}/api/tracks`
+	return fetch(`${SERVER}/api/tracks`)
+	.then(res => res.json())
+	.catch(err => console.log("Problem with getTracks request::", err))
+
 }
 
 function getRacers() {
 	// GET request to `${SERVER}/api/cars`
+	return fetch(`${SERVER}/api/cars`)
+	.then(res => res.json())
+	.catch(err => console.log("Problem with getRacers request::", err))
+
 }
 
 function createRace(player_id, track_id) {
